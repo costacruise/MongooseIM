@@ -154,7 +154,7 @@ element_to_namespace(_) ->
 
 %% Skip invalid elements.
 to_map(Elems) ->
-    [{NS, Elem} || Elem <- Elems, is_valid_namespace(NS = element_to_namespace(Elem))].
+    [{NS, Elem} || #xmlel{} = Elem <- Elems, is_valid_namespace(NS = element_to_namespace(Elem))].
 
 is_valid_namespace(Namespace) -> Namespace =/= <<>>.
 
