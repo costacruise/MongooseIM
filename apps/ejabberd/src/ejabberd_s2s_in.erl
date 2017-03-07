@@ -170,6 +170,7 @@ init([{SockMod, Socket}, Opts]) ->
               end,
     TLSOpts2 = lists:filter(fun({protocol_options, _}) -> true;
                                ({dhfile, _}) -> true;
+                               ({ciphers, _}) -> true;
                                (_) -> false
                             end, Opts),
     TLSOpts = lists:append(TLSOpts1, TLSOpts2),
@@ -359,8 +360,6 @@ wait_for_feature_request({xmlstreamelement, El}, StateData) ->
                         end,
                     if
                         AuthRes ->
-                            (StateData#state.sockmod):reset_stream(
-                              StateData#state.socket),
                             send_element(StateData,
                                           #xmlel{name = <<"success">>,
                                                  attrs = [{<<"xmlns">>, ?NS_SASL}]}),
