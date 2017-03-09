@@ -1115,6 +1115,7 @@ iq_disco_info(Host, SNode, From, Lang) ->
           Rsm    :: none | rsm_in())
         -> {result, [xmlel()]} | {error, term()}.
 iq_disco_items(Host, <<>>, From, _RSM) ->
+    ?ERROR_MSG("tree_action: ~p~n", [catch tree_action(Host, get_subnodes, [Host, <<>>, From])]),
     {result,
      lists:map(fun (#pubsub_node{nodeid = {_, SubNode}, options = Options}) ->
                        Attrs = case get_option(Options, title) of
@@ -1126,7 +1127,10 @@ iq_disco_items(Host, <<>>, From, _RSM) ->
                                         {<<"name">>, Title}
                                         | nodeAttr(SubNode)]
                                end,
-                       #xmlel{name = <<"item">>, attrs = Attrs}
+                       #xmlel{name = <<"item">>, attrs = Attrs};
+                    (A) ->
+                       ?ERROR_MSG("iq_disco_items action: ~p~n", [A]),
+                       #xmlel{name = <<"item">>, attrs = []}
                end,
                tree_action(Host, get_subnodes, [Host, <<>>, From]))};
 iq_disco_items(Host, ?NS_COMMANDS, _From, _RSM) ->
@@ -4007,7 +4011,7 @@ features(Host, Node) when is_binary(Node) ->
 tree_call({_User, Server, _Resource}, Function, Args) ->
     tree_call(Server, Function, Args);
 tree_call(Host, Function, Args) ->
-    ?DEBUG("tree_call ~p ~p ~p", [Host, Function, Args]),
+    ?DEBUG("tree_call ~p ~p ~p (tree -> ~p)", [Host, Function, Args, tree(Host)]),
     apply(tree(Host), Function, Args).
 
 tree_action(Host, Function, Args) ->

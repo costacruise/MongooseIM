@@ -109,7 +109,7 @@
   0},
  {<<"mysql">>,
   {git,"git://github.com/dizzyd/erlang-mysql-driver.git",
-       {branch,"master"}},
+       {ref,"051f22e1cbe130061b43273a14217c659e6b860d"}},
   0},
  {<<"p1_utils">>,{pkg,<<"p1_utils">>,<<"1.0.5">>},1},
  {<<"pa">>,

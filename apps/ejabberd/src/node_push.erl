@@ -28,7 +28,7 @@
 -author('christian@rechenwerk.net').
 
 -include("pubsub.hrl").
--include("logger.hrl").
+-include("ejabberd.hrl").
 -include("jlib.hrl").
 
 -behaviour(gen_pubsub_node).

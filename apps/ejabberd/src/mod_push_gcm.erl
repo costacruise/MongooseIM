@@ -36,7 +36,7 @@
          terminate/2,
          code_change/3]).
 
--include("logger.hrl").
+-include("ejabberd.hrl").
 
 -define(PUSH_URL, "https://gcm-http.googleapis.com/gcm/send").
 -define(EXPIRY_TIME, 60*60*24).

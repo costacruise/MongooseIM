@@ -28,6 +28,7 @@
                         xdata :: jlib:xmlel() | false,
                         others
                        }).
+-type adhoc_request() :: #adhoc_request{}.
 
 -record(adhoc_response, {lang :: ejabberd:lang(),
                          node :: ejabberd:server(),
