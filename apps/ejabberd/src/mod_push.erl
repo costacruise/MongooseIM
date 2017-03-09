@@ -56,9 +56,6 @@
 
 -define(MODULE_APNS, mod_push_apns).
 -define(MODULE_GCM, mod_push_gcm).
--define(MODULE_MOZILLA, mod_push_mozilla).
--define(MODULE_UBUNTU, mod_push_ubuntu).
--define(MODULE_WNS, mod_push_wns).
 
 -define(NS_PUSH, <<"urn:xmpp:push:0">>).
 -define(NS_PUSH_SUMMARY, <<"urn:xmpp:push:summary">>).
@@ -161,7 +158,7 @@
                              packet :: xmlelement()}).
 
 -type auth_data() :: #auth_data{}.
--type backend_type() :: apns | gcm | mozilla | ubuntu | wns.
+-type backend_type() :: apns | gcm.
 -type bare_jid() :: {binary(), binary()}.
 -type payload_key() ::
     'last-message-sender' | 'last-subscription-sender' | 'message-count' |
@@ -1259,10 +1256,7 @@ start_worker(#push_backend{worker = Worker, type = Type},
     Module =
     proplists:get_value(Type,
                         [{apns, ?MODULE_APNS},
-                         {gcm, ?MODULE_GCM},
-                         {mozilla, ?MODULE_MOZILLA},
-                         {ubuntu, ?MODULE_UBUNTU},
-                         {wns, ?MODULE_WNS}]),
+                         {gcm, ?MODULE_GCM}]),
     BackendSpec =
     {Worker,
      {gen_server, start_link,
@@ -1346,55 +1340,6 @@ process_adhoc_command(Acc, From, #jid{lserver = LServer},
                 case Parsed of
                     {result, [Token, DeviceId, DeviceName]} ->
                         register_client(From, LServer, gcm, Token, DeviceId,
-                                        DeviceName, <<"">>);
-
-                    _ -> error
-                end
-            end;
-
-        <<"register-push-mozilla">> ->
-            fun() ->
-                Parsed = parse_form([XData],
-                                    undefined,
-                                    [{single, <<"token">>}],
-                                    [{single, <<"device-id">>},
-                                     {single, <<"device-name">>}]),
-                case Parsed of
-                    {result, [Token, DeviceId, DeviceName]} ->
-                        register_client(From, LServer, mozilla, Token, DeviceId,
-                                        DeviceName, <<"">>);
-
-                    _ -> error
-                end
-            end;
-
-        <<"register-push-ubuntu">> ->
-            fun() ->
-                Parsed = parse_form([XData],
-                                    undefined,
-                                    [{single, <<"token">>},
-                                     {single, <<"application-id">>}],
-                                    [{single, <<"device-id">>},
-                                     {single, <<"device-name">>}]),
-                case Parsed of
-                    {result, [Token, AppId, DeviceId, DeviceName]} ->
-                        register_client(From, LServer, ubuntu, Token,
-                                        DeviceId, DeviceName, AppId);
-                    
-                    _ -> error
-                end
-            end;
-
-        <<"register-push-wns">> ->
-            fun() ->
-                Parsed = parse_form([XData],
-                                    undefined,
-                                    [{single, <<"token">>}],
-                                    [{single, <<"device-id">>},
-                                     {single, <<"device-name">>}]),
-                case Parsed of
-                    {result, [Token, DeviceId, DeviceName]} ->
-                        register_client(From, LServer, wns, Token, DeviceId,
                                         DeviceName, <<"">>);
 
                     _ -> error
@@ -2025,7 +1970,7 @@ get_backend_opts(RawOptsList) ->
             jlib:string_to_jid(proplists:get_value(pubsub_host, Opts)),
             RawType = proplists:get_value(type, Opts),
             Type =
-            case lists:member(RawType, [apns, gcm, mozilla, ubuntu, wns]) of
+            case lists:member(RawType, [apns, gcm]) of
                 true -> RawType
             end,
             AppName = proplists:get_value(app_name, Opts, <<"any">>),
