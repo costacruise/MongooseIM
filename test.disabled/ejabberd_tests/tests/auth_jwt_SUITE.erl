@@ -81,8 +81,7 @@ end_per_testcase(CaseName, Config) ->
 %% JSON Web Token tests
 %%--------------------------------------------------------------------
 
-auth_props() ->
-    Password = generate_token(0),
+auth_props(Password) ->
     [{username, ?USERNAME},
      {server, <<"localhost">>},
      {password, Password},
@@ -90,7 +89,8 @@ auth_props() ->
     ].
 
 auth_ok(_Config) ->
-    ClientProps0 = auth_props(),
+    Password = generate_token(0),
+    ClientProps0 = auth_props(Password),
     {ok, _Conn, _ClientProps, _} = escalus_connection:start(ClientProps0,
                                                             [start_stream,
                                                              stream_features,
@@ -99,7 +99,9 @@ auth_ok(_Config) ->
     ok.
 
 auth_fail(_Config) ->
-    ClientProps0 = auth_props(),
+    %% Token will be valid starting in a day
+    Password = generate_token(86400),
+    ClientProps0 = auth_props(Password),
     {error, _} = escalus_connection:start(ClientProps0,
                                           [start_stream,
                                            stream_features,
