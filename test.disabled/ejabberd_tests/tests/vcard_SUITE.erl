@@ -1051,7 +1051,7 @@ stop_running_vcard_mod(Config) ->
     dynamic_modules:stop(Domain, mod_vcard),
     [{mod_vcard, CurrentVcardConfig} | Config].
 
-stop_vcard_mod(Config) ->
+stop_vcard_mod(_Config) ->
     Domain = ct:get_config({hosts, mim, domain}),
     dynamic_modules:stop(Domain, mod_vcard).
 
@@ -1300,7 +1300,7 @@ get_all_vcards() ->
         [{<<"FAMILY">>, <<"Doe">>},
          {<<"GIVEN">>, <<"Alice">>}]},
        {<<"DESC">>, <<"{ \"activated\": true }">>}
-      ] ++ maybe_add_jabberd_id(<<"aliceb@", Domain/binary, ".bis">>)}
+      ] ++ maybe_add_jabberd_id(<<"aliceb@", Domain/binary, ".bis">>)},
      {<<"eveb@localhost.bis">>,
       [{<<"NICKNAME">>, <<"eveb">>},
        {<<"FN">>, <<"Evil, Eve">>}
